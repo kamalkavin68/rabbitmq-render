@@ -1,24 +1,13 @@
-# Use the official RabbitMQ image with management plugin
+# Use the official RabbitMQ Docker image
 FROM rabbitmq:3-management
 
-# Set essential environment variables only
-ENV RABBITMQ_DEFAULT_USER=admin
-ENV RABBITMQ_DEFAULT_PASS=admin
-ENV RABBITMQ_DEFAULT_VHOST=/
-
-# Copy custom configuration file
-COPY rabbitmq.conf /etc/rabbitmq/rabbitmq.conf
-
-# Expose ports
+# Expose the default ports for RabbitMQ
 EXPOSE 5672 15672
 
-# Create and set permissions for data directory
-RUN mkdir -p /var/lib/rabbitmq/mnesia && \
-    chown -R rabbitmq:rabbitmq /var/lib/rabbitmq
+# Set environment variables
+ENV RABBITMQ_DEFAULT_USER=admin \
+    RABBITMQ_DEFAULT_PASS=admin123 \
+    RABBITMQ_DEFAULT_VHOST=/
 
-# Add healthcheck
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
-  CMD rabbitmq-diagnostics check_port_connectivity
-
-# Set default command
+# Start RabbitMQ when the container starts
 CMD ["rabbitmq-server"]
