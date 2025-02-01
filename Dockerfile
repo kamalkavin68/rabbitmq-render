@@ -1,12 +1,10 @@
 # Use the official RabbitMQ image with management plugin
 FROM rabbitmq:3-management
 
-# Set environment variables
-ENV RABBITMQ_DEFAULT_USER=user
-ENV RABBITMQ_DEFAULT_PASS=password
+# Set essential environment variables only
+ENV RABBITMQ_DEFAULT_USER=admin
+ENV RABBITMQ_DEFAULT_PASS=admin
 ENV RABBITMQ_DEFAULT_VHOST=/
-ENV RABBITMQ_SSL_VERIFY=verify_none
-ENV RABBITMQ_LOGS="-"
 
 # Copy custom configuration file
 COPY rabbitmq.conf /etc/rabbitmq/rabbitmq.conf
