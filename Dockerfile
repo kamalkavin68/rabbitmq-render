@@ -1,13 +1,22 @@
-# Use the official RabbitMQ Docker image
+# Use the official RabbitMQ image with management plugin
 FROM rabbitmq:3-management
 
-# Expose the default ports for RabbitMQ
+# Set environment variables
+ENV RABBITMQ_DEFAULT_USER=admin
+ENV RABBITMQ_DEFAULT_PASS=admin
+
+# Expose ports
+# 5672: AMQP protocol
+# 15672: Management UI
 EXPOSE 5672 15672
 
-# Set environment variables
-ENV RABBITMQ_DEFAULT_USER=admin \
-    RABBITMQ_DEFAULT_PASS=admin123 \
-    RABBITMQ_DEFAULT_VHOST=/
+# Create and set permissions for data directory
+RUN mkdir -p /var/lib/rabbitmq/mnesia && \
+    chown -R rabbitmq:rabbitmq /var/lib/rabbitmq
 
-# Start RabbitMQ when the container starts
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD rabbitmq-diagnostics check_port_connectivity
+
+# Set default command
 CMD ["rabbitmq-server"]
