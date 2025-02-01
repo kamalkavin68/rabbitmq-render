@@ -1,8 +1,22 @@
 # Use the official RabbitMQ image with management plugin
-FROM rabbitmq:4.0-management
+FROM rabbitmq:3-management
 
-# Expose the necessary ports
+# Set environment variables
+ENV RABBITMQ_DEFAULT_USER=admin
+ENV RABBITMQ_DEFAULT_PASS=admin123
+
+# Expose ports
+# 5672: AMQP protocol
+# 15672: Management UI
 EXPOSE 5672 15672
 
-# Default command to run RabbitMQ server
+# Create and set permissions for data directory
+RUN mkdir -p /var/lib/rabbitmq/mnesia && \
+    chown -R rabbitmq:rabbitmq /var/lib/rabbitmq
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD rabbitmq-diagnostics check_port_connectivity
+
+# Set default command
 CMD ["rabbitmq-server"]
